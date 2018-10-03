@@ -91,6 +91,10 @@ import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import android.widget.Spinner;
+import android.widget.ArrayAdapter;
+
 import com.squareup.otto.Subscribe;
 
 /**
@@ -254,6 +258,15 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
         {
 
             View validation = vRoot.findViewById(R.id.action_approve);
+            Spinner  ActionSelection = (Spinner)vRoot.findViewById(R.id.action_selection);
+            List<String> list = new ArrayList<String>();
+            list.add("list 1");
+            list.add("list 2");
+            list.add("list 3");
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_spinner_item, list);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            ActionSelection.setAdapter(dataAdapter);
+            /*
             View reject = vRoot.findViewById(R.id.action_reject);
             comment = (EditText) vRoot.findViewById(R.id.task_comment);
 
@@ -291,6 +304,7 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
                     completeTask(currentTask, isReviewTask, false);
                 }
             });
+            */
         }
         else
         {

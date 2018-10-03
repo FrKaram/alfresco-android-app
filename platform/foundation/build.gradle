@@ -20,8 +20,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "23.0.2"
-
+    buildToolsVersion '28.0.3'
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 26
@@ -30,12 +29,10 @@ android {
 
         defaultPublishConfig DEFAULT_PUBLISH
     }
-
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
     }
-
     buildTypes {
         debug {
             buildConfigField "String", "PROVIDER_AUTHORITY", "\"" + PROVIDER_AUTHORITY_DEBUG + "\""
@@ -50,10 +47,11 @@ android {
             buildConfigField "String", "ACCOUNT_ID", "\"" + ACCOUNT_ID + "\""
         }
     }
-
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/DEPENDENCIES'
+    }
+    productFlavors {
     }
 }
 

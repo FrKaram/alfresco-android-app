@@ -20,7 +20,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "23.0.3"
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId APPLICATION_ID
@@ -103,12 +103,10 @@ android {
         //CUSTOM EXTENSION FLAVOR
         custom {
             //Add here custom configuration
-
             dependencies {
                 //Add here 3rd party dependencies
             }
         }
-
         //PLAY STORE FLAVOR
         store {
             dependencies {
@@ -117,13 +115,11 @@ android {
                 debugCompile project(':extensions:analytics')
                 debugCompile project(':extensions:tools')
 
-
                 //storeCompile project(':extensions:samsung')
                 storeCompile project(':extensions:scansnap')
                 storeCompile project(':extensions:analytics')
             }
         }
-
         //MOBILE IRON FLAVOR
         mobileiron {
             dependencies {

@@ -22,7 +22,7 @@
     <item name="fr_details_summary" type="bool">true</item>
     <item name="app_import" type="layout">@layout/app_import_spinner</item>
     <item name="app_start_process" type="layout">@layout/app_start_process_onepanel</item>
-    <item name="app_task_complete" type="layout">@layout/app_task_complete_button</item>
+    <item name="app_task_complete" type="layout">@layout/app_task_complete_button2</item>
     <item name="app_task_header" type="layout">@layout/app_task_header_single</item>
     <item name="app_passcode" type="layout">@layout/app_passcode_simple</item>
 
