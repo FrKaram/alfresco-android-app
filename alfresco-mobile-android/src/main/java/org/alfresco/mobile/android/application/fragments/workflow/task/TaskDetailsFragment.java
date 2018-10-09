@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.*;
 
 import org.alfresco.mobile.android.api.constants.OnPremiseConstant;
 import org.alfresco.mobile.android.api.constants.WorkflowModel;
@@ -94,6 +95,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
+import java.util.Iterator;
 
 import com.squareup.otto.Subscribe;
 
@@ -123,6 +125,8 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
     private Person initiator;
 
     private List<Document> items;
+
+    private List<OutcomeChoice> AvailableOutcomes = new ArrayList<OutcomeChoice>();
 
     // ///////////////////////////////////////////////////////////////////////////
     // CONSTRUCTORS & HELPERS
@@ -256,36 +260,75 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
 
         if (currentTask != null && endedAt == null)
         {
-
             View validation = vRoot.findViewById(R.id.action_approve);
-            Spinner  ActionSelection = (Spinner)vRoot.findViewById(R.id.action_selection);
-            List<String> list = new ArrayList<String>();
-            list.add("list 1");
-            list.add("list 2");
-            list.add("list 3");
-            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_spinner_item, list);
-            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            ActionSelection.setAdapter(dataAdapter);
-            /*
-            View reject = vRoot.findViewById(R.id.action_reject);
+
+            //View reject = vRoot.findViewById(R.id.action_reject);
+
             comment = (EditText) vRoot.findViewById(R.id.task_comment);
 
-            if (WorkflowModel.TASK_REVIEW.equals(currentTask.getKey())
+            if (currentTask.getKey().startsWith("supplierinvoice"))
+            {
+                AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve"));
+                AvailableOutcomes.add(new OutcomeChoice("Litigation", currentTask.getKey()+"Outcome", "Litigation"));
+                AvailableOutcomes.add(new OutcomeChoice("Resend To LAD", currentTask.getKey()+"Outcome", "ResendToLAD"));
+                AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject"));
+            }
+            else if (  WorkflowModel.TASK_REVIEW.equals(currentTask.getKey())
                     || WorkflowModel.TASK_ACTIVITI_REVIEW.equals(currentTask.getKey())
                     || "imwf:activitiModeratedInvitationReviewTask".equals(currentTask.getKey())
                     || "imwf:moderatedInvitationReviewTask".equals(currentTask.getKey()))
             {
-                isReviewTask = true;
-                reject.setVisibility(View.VISIBLE);
+                if ("imwf:activitiModeratedInvitationReviewTask".equals(currentTask.getKey()))
+                {
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_APPROVE, "imwf_reviewOutcome", WorkflowModel.TRANSITION_APPROVE.toLowerCase()));
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_REJECT, "imwf_reviewOutcome", WorkflowModel.TRANSITION_REJECT.toLowerCase()));
+                }
+                else if ((getSession().getRepositoryInfo().getMajorVersion() < OnPremiseConstant.ALFRESCO_VERSION_4))
+                {
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_APPROVE, WorkflowModel.PROP_TRANSITIONS_VALUE, WorkflowModel.TRANSITION_APPROVE.toLowerCase()));
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_REJECT, WorkflowModel.PROP_TRANSITIONS_VALUE, WorkflowModel.TRANSITION_REJECT.toLowerCase()));
+                }
+                else
+                {
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_APPROVE, WorkflowModel.PROP_REVIEW_OUTCOME, WorkflowModel.TRANSITION_APPROVE.toLowerCase()));
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_REJECT, WorkflowModel.PROP_REVIEW_OUTCOME, WorkflowModel.TRANSITION_REJECT.toLowerCase()));
+                }
+
+                //isReviewTask = true;
+                //reject.setVisibility(View.VISIBLE);
             }
             else
             {
+                /*
                 reject.setVisibility(View.GONE);
                 if (validation instanceof Button)
                 {
                     ((Button) validation).setText(R.string.done);
                 }
+                */
+                AvailableOutcomes.add(new OutcomeChoice("Done", "", ""));;
             }
+
+            ArrayList<String> list = new ArrayList<String>();
+
+            for(int i=0;i<AvailableOutcomes.size(); i++)
+            {
+                list.add(AvailableOutcomes.get(i).DisplayName);
+            }
+            /*
+            Iterator<String> itr = AvailableOutcomes.keySet().iterator();
+            while (itr.hasNext()) {
+                String Key = itr.next();
+                list.add(AvailableOutcomes.get(Key).DisplayName);
+            };
+            */
+
+            Collections.sort(list);
+
+            Spinner  ActionSelection = (Spinner)vRoot.findViewById(R.id.action_selection);
+            ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_spinner_item, list);
+            dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            ActionSelection.setAdapter(dataAdapter);
 
             validation.setOnClickListener(new OnClickListener()
             {
@@ -296,6 +339,7 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
                 }
             });
 
+            /*
             reject.setOnClickListener(new OnClickListener()
             {
                 @Override
@@ -462,6 +506,23 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
     {
         // Prepare Variables
         Map<String, Serializable> variables = new HashMap<String, Serializable>(3);
+
+        Spinner  ActionSelection = (Spinner)vRoot.findViewById(R.id.action_selection);
+        String SelectedItem = ActionSelection.getSelectedItem().toString();
+
+        OutcomeChoice OC = null;
+        for(int i=0;i<AvailableOutcomes.size(); i++) {
+            if (AvailableOutcomes.get(i).DisplayName.equals(SelectedItem)) {
+                OC = (OutcomeChoice) AvailableOutcomes.get(i);
+                break;
+            }
+        }
+
+        if (OC.OutcomePropertyName != "")
+        {
+            variables.put(OC.OutcomePropertyName,OC.OutcomeValue);
+        }
+/*
         if (isReviewTask)
         {
             String outcome = (isApprove) ? WorkflowModel.TRANSITION_APPROVE : WorkflowModel.TRANSITION_REJECT;
@@ -486,14 +547,13 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
                 variables.put(WorkflowModel.PROP_REVIEW_OUTCOME, outcome);
             }
         }
-
+*/
         if (comment.getText().length() > 0)
         {
             variables.put(WorkflowModel.PROP_COMMENT, comment.getText().toString());
         }
 
-        String operationId = Operator.with(getActivity(), getAccount()).load(
-                new CompleteTaskRequest.Builder(task, variables));
+        String operationId = Operator.with(getActivity(), getAccount()).load(new CompleteTaskRequest.Builder(task, variables));
 
         OperationWaitingDialogFragment.newInstance(CompleteTaskRequest.TYPE_ID, R.drawable.ic_validate,
                 getString(R.string.task_completing), null, null, 0, operationId).show(
@@ -746,6 +806,20 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
         protected Fragment createFragment(Bundle b)
         {
             return newInstanceByTemplate(b);
+        }
+    }
+
+    public class OutcomeChoice
+    {
+        public String DisplayName;
+        public String OutcomePropertyName;
+        public String OutcomeValue;
+
+        public OutcomeChoice(String displayName, String outcomePropertyName, String outcomeValue)
+        {
+            this.DisplayName = displayName;
+            this.OutcomePropertyName = outcomePropertyName;
+            this.OutcomeValue = outcomeValue;
         }
     }
 }
