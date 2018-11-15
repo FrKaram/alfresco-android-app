@@ -25,5 +25,6 @@ pom.xml.*
 #GRADLE
 .gradle
 /local.properties
+/build.properties
 .DS_Store
 /build

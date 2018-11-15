@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/btn_default_holo_light"
-            android:drawableLeft="@drawable/ic_application_logo"
+            android:drawableLeft="@mipmap/logoks2launcher"
             android:gravity="left" />
 
         <LinearLayout

@@ -30,7 +30,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="100dip"
-            android:src="@drawable/alfresco_logo_simple" />
+            android:src="@mipmap/ic_launcher_foreground" />
 
         <Button
             android:id="@+id/homescreen_login"

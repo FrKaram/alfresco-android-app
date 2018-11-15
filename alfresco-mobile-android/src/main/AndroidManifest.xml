@@ -30,7 +30,7 @@
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission
         android:name="android.permission.GET_ACCOUNTS"
-        android:maxSdkVersion="22" />
+        android:maxSdkVersion="26" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <!-- Responsible for sync operations -->
@@ -45,10 +45,10 @@
         android:allowBackup="false"
         android:configChanges="locale|keyboardHidden|orientation|screenSize"
         android:hardwareAccelerated="true"
-        android:icon="@drawable/ic_application_icon"
+        android:icon="@mipmap/logoks2launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:logo="@drawable/ic_application_logo"
+        android:logo="@mipmap/logoks2launcher"
         android:theme="@style/AlfrescoMaterialTheme">
 
         <!-- *************************************************************** -->
@@ -205,9 +205,9 @@
             android:name="org.alfresco.mobile.android.application.activity.PublicDispatcherActivity"
             android:configChanges="locale|keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:icon="@drawable/ic_application_icon"
+            android:icon="@mipmap/logoks2launcher"
             android:label="@string/app_name"
-            android:logo="@drawable/ic_application_icon"
+            android:logo="@mipmap/logoks2launcher"
             android:theme="@style/AlfrescoMaterialTheme.Dialog"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -239,9 +239,9 @@
         <activity
             android:name="org.alfresco.mobile.android.application.activity.PrivateDialogActivity"
             android:exported="false"
-            android:icon="@drawable/ic_application_icon"
+            android:icon="@mipmap/logoks2launcher"
             android:label="@string/app_name"
-            android:logo="@drawable/ic_application_icon"
+            android:logo="@mipmap/logoks2launcher"
             android:theme="@style/AlfrescoMaterialTheme.Dialog"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

@@ -33,7 +33,11 @@
             android:layout_height="match_parent"
             android:background="@color/primary"
             android:padding="@dimen/d_4"
-            android:src="@drawable/alfresco_banner_white" />
+            android:src="@drawable/ks2appbanniere"
+            />
+            <!--android:src="@drawable/alfresco_banner_white" -->
+
+
 
         <ImageButton
             android:id="@+id/signin_more_information"

@@ -17,7 +17,7 @@
 -->
 <resources>
 
-    <string name="app_name">Content</string>
+    <string name="app_name">KS2 Docs</string>
     <string name="empty_accounts">No account available</string>
 
     <!-- SIGN IN & CREATE ACCOUNT SCREEN -->

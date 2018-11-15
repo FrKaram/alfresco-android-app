@@ -266,12 +266,50 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
 
             comment = (EditText) vRoot.findViewById(R.id.task_comment);
 
+            ArrayList<String> RejectReason = new ArrayList<String>();
+
             if (currentTask.getKey().startsWith("supplierinvoice"))
             {
-                AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve"));
-                AvailableOutcomes.add(new OutcomeChoice("Litigation", currentTask.getKey()+"Outcome", "Litigation"));
-                AvailableOutcomes.add(new OutcomeChoice("Resend To LAD", currentTask.getKey()+"Outcome", "ResendToLAD"));
-                AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject"));
+                switch(currentTask.getKey().substring(currentTask.getKey().indexOf(':') +1 ))
+                {
+                    case "supplierinvoice:buyerApprovalLevel1":
+                        AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
+                        AvailableOutcomes.add(new OutcomeChoice("Litigation", currentTask.getKey()+"Outcome", "Litigation", false));
+                        AvailableOutcomes.add(new OutcomeChoice("Resend To LAD", currentTask.getKey()+"Outcome", "ResendToLAD", false));
+                        AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
+                        break;
+                    case "supplierinvoice:buyerApprovalLevel2":
+                        AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
+                        AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
+                        break;
+                    case "supplierinvoice:litigationHandling":
+                        AvailableOutcomes.add(new OutcomeChoice("Resubmit", currentTask.getKey()+"Outcome", "Resubmit", false));
+                        AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
+                        break;
+                    case "supplierinvoice:controllingApproval":
+                        AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
+                        AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
+                        break;
+                    case "supplierinvoice:accountingApproval":
+                        AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
+                        AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
+                        break;
+                    case "supplierinvoice:payment":
+                        AvailableOutcomes.add(new OutcomeChoice("Payed", currentTask.getKey()+"Outcome", "Payed", false));
+                        break;
+                    case "supplierinvoice:rollbackAccounting":
+                        AvailableOutcomes.add(new OutcomeChoice("Done", currentTask.getKey()+"Outcome", "Done", false));
+                        break;
+                    default:
+                        AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
+                        AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
+                        break;
+                }
+
+                RejectReason.add("Ne nous concerne pas");
+                RejectReason.add("Marchandises ou prestations factur\\u00e9es non conformes");
+                RejectReason.add("Marchandises ou prestations d\\u00e9j\\u00e0 factur\\u00e9es");
+                RejectReason.add("Aucune s\\u00e9lection");
             }
             else if (  WorkflowModel.TASK_REVIEW.equals(currentTask.getKey())
                     || WorkflowModel.TASK_ACTIVITI_REVIEW.equals(currentTask.getKey())
@@ -280,18 +318,18 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
             {
                 if ("imwf:activitiModeratedInvitationReviewTask".equals(currentTask.getKey()))
                 {
-                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_APPROVE, "imwf_reviewOutcome", WorkflowModel.TRANSITION_APPROVE.toLowerCase()));
-                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_REJECT, "imwf_reviewOutcome", WorkflowModel.TRANSITION_REJECT.toLowerCase()));
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_APPROVE, "imwf_reviewOutcome", WorkflowModel.TRANSITION_APPROVE.toLowerCase(), false));
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_REJECT, "imwf_reviewOutcome", WorkflowModel.TRANSITION_REJECT.toLowerCase(),false));
                 }
                 else if ((getSession().getRepositoryInfo().getMajorVersion() < OnPremiseConstant.ALFRESCO_VERSION_4))
                 {
-                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_APPROVE, WorkflowModel.PROP_TRANSITIONS_VALUE, WorkflowModel.TRANSITION_APPROVE.toLowerCase()));
-                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_REJECT, WorkflowModel.PROP_TRANSITIONS_VALUE, WorkflowModel.TRANSITION_REJECT.toLowerCase()));
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_APPROVE, WorkflowModel.PROP_TRANSITIONS_VALUE, WorkflowModel.TRANSITION_APPROVE.toLowerCase(),false));
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_REJECT, WorkflowModel.PROP_TRANSITIONS_VALUE, WorkflowModel.TRANSITION_REJECT.toLowerCase(),false));
                 }
                 else
                 {
-                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_APPROVE, WorkflowModel.PROP_REVIEW_OUTCOME, WorkflowModel.TRANSITION_APPROVE.toLowerCase()));
-                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_REJECT, WorkflowModel.PROP_REVIEW_OUTCOME, WorkflowModel.TRANSITION_REJECT.toLowerCase()));
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_APPROVE, WorkflowModel.PROP_REVIEW_OUTCOME, WorkflowModel.TRANSITION_APPROVE.toLowerCase(),false));
+                    AvailableOutcomes.add(new OutcomeChoice(WorkflowModel.TRANSITION_REJECT, WorkflowModel.PROP_REVIEW_OUTCOME, WorkflowModel.TRANSITION_REJECT.toLowerCase(),false));
                 }
 
                 //isReviewTask = true;
@@ -306,12 +344,12 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
                     ((Button) validation).setText(R.string.done);
                 }
                 */
-                AvailableOutcomes.add(new OutcomeChoice("Done", "", ""));;
+                AvailableOutcomes.add(new OutcomeChoice("Done", "", "",false));;
             }
 
             ArrayList<String> list = new ArrayList<String>();
 
-            for(int i=0;i<AvailableOutcomes.size(); i++)
+            for(int i=0; i<AvailableOutcomes.size(); i++)
             {
                 list.add(AvailableOutcomes.get(i).DisplayName);
             }
@@ -335,7 +373,7 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
                 @Override
                 public void onClick(View v)
                 {
-                    completeTask(currentTask, isReviewTask, true);
+                completeTask(currentTask, isReviewTask, true);
                 }
             });
 
@@ -814,12 +852,14 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
         public String DisplayName;
         public String OutcomePropertyName;
         public String OutcomeValue;
+        public Boolean RequiresReason;
 
-        public OutcomeChoice(String displayName, String outcomePropertyName, String outcomeValue)
+        public OutcomeChoice(String displayName, String outcomePropertyName, String outcomeValue, Boolean requiresReason)
         {
             this.DisplayName = displayName;
             this.OutcomePropertyName = outcomePropertyName;
             this.OutcomeValue = outcomeValue;
+            this.RequiresReason = requiresReason;
         }
     }
 }

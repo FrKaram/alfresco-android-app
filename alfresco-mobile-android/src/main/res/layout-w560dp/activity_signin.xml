@@ -34,15 +34,15 @@
             android:layout_height="match_parent"
             android:background="@color/primary"
             android:padding="@dimen/d_4"
-            android:src="@drawable/alfresco_banner_white" />
+            android:src="@mipmap/ic_launcher_foreground" />
 
         <ImageButton
             android:id="@+id/signin_more_information"
-            android:layout_width="wrap_content"
             style="@style/AlfrescoMaterialTheme.Button.BorderLess"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:padding="@dimen/d_16"
             android:layout_gravity="center|right"
+            android:padding="@dimen/d_16"
             android:src="@drawable/ic_more_white" />
 
     </FrameLayout>
