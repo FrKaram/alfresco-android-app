@@ -85,6 +85,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -103,7 +104,7 @@ import com.squareup.otto.Subscribe;
  * @since 1.3
  * @author Jean Marie Pascal
  */
-public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerCallback
+public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerCallback, AdapterView.OnItemSelectedListener
 {
 
     public static final String TAG = TaskDetailsFragment.class.getName();
@@ -218,6 +219,8 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
 
     private String processDefinitionId;
 
+    private ArrayList<String> RejectReason = new ArrayList<String>();
+
     private void initVariables()
     {
         if (currentTask != null)
@@ -252,6 +255,8 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
 
     public void initCompleteForm()
     {
+        RejectReason.add("--- Sélectioner un motif en cas de rejet ---"); //TODO : Use localisation files
+
         if (currentProcess != null)
         {
             vRoot.findViewById(R.id.complete_group).setVisibility(View.GONE);
@@ -266,50 +271,49 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
 
             comment = (EditText) vRoot.findViewById(R.id.task_comment);
 
-            ArrayList<String> RejectReason = new ArrayList<String>();
-
             if (currentTask.getKey().startsWith("supplierinvoice"))
             {
                 switch(currentTask.getKey().substring(currentTask.getKey().indexOf(':') +1 ))
                 {
-                    case "supplierinvoice:buyerApprovalLevel1":
+                    case "buyerApprovalLevel1Task":
                         AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
                         AvailableOutcomes.add(new OutcomeChoice("Litigation", currentTask.getKey()+"Outcome", "Litigation", false));
                         AvailableOutcomes.add(new OutcomeChoice("Resend To LAD", currentTask.getKey()+"Outcome", "ResendToLAD", false));
                         AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
                         break;
-                    case "supplierinvoice:buyerApprovalLevel2":
+                    case "buyerApprovalLevel2Task":
                         AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
                         AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
                         break;
-                    case "supplierinvoice:litigationHandling":
+                    case "litigationHandlingTask":
                         AvailableOutcomes.add(new OutcomeChoice("Resubmit", currentTask.getKey()+"Outcome", "Resubmit", false));
                         AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
                         break;
-                    case "supplierinvoice:controllingApproval":
+                    case "controllingApprovalTask":
                         AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
                         AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
                         break;
-                    case "supplierinvoice:accountingApproval":
+                    case "accountingApprovalTask":
                         AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
                         AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
                         break;
-                    case "supplierinvoice:payment":
+                    case "paymentTask":
                         AvailableOutcomes.add(new OutcomeChoice("Payed", currentTask.getKey()+"Outcome", "Payed", false));
                         break;
-                    case "supplierinvoice:rollbackAccounting":
+                    case "rollbackAccountingTask":
                         AvailableOutcomes.add(new OutcomeChoice("Done", currentTask.getKey()+"Outcome", "Done", false));
                         break;
                     default:
-                        AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
-                        AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
+                        //AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
+                        //AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
                         break;
                 }
 
+                //TODO : Use localisation files
                 RejectReason.add("Ne nous concerne pas");
-                RejectReason.add("Marchandises ou prestations factur\\u00e9es non conformes");
-                RejectReason.add("Marchandises ou prestations d\\u00e9j\\u00e0 factur\\u00e9es");
-                RejectReason.add("Aucune s\\u00e9lection");
+                RejectReason.add("Marchandises ou prestations facturés non conformes");
+                RejectReason.add("Marchandises ou prestations déjà facturées");
+                RejectReason.add("Aucune sélection");
             }
             else if (  WorkflowModel.TASK_REVIEW.equals(currentTask.getKey())
                     || WorkflowModel.TASK_ACTIVITI_REVIEW.equals(currentTask.getKey())
@@ -363,10 +367,17 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
 
             Collections.sort(list);
 
-            Spinner  ActionSelection = (Spinner)vRoot.findViewById(R.id.action_selection);
+            Spinner ActionSelection = (Spinner)vRoot.findViewById(R.id.action_selection);
+            ActionSelection.setOnItemSelectedListener(this);
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_spinner_item, list);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             ActionSelection.setAdapter(dataAdapter);
+
+            Spinner ReasonSelection = (Spinner)vRoot.findViewById(R.id.reason_selection);
+            ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_spinner_item, RejectReason);
+            dataAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            ReasonSelection.setAdapter(dataAdapter2);
+            ReasonSelection.setSelection(0);
 
             validation.setOnClickListener(new OnClickListener()
             {
@@ -391,7 +402,6 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
         else
         {
             vRoot.findViewById(R.id.complete_group).setVisibility(View.GONE);
-
         }
     }
 
@@ -553,6 +563,20 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
             if (AvailableOutcomes.get(i).DisplayName.equals(SelectedItem)) {
                 OC = (OutcomeChoice) AvailableOutcomes.get(i);
                 break;
+            }
+        }
+
+        Spinner ReasonSelection = (Spinner)vRoot.findViewById(R.id.reason_selection);
+        if (OC.RequiresReason)
+        {
+            if (ReasonSelection.getSelectedItemPosition() == 0)
+            {
+                ReasonSelection.requestFocus();
+                return;
+            }
+            else
+            {
+                variables.put("rejectionReason",ReasonSelection.getSelectedItem().toString());
             }
         }
 
@@ -845,6 +869,37 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
         {
             return newInstanceByTemplate(b);
         }
+    }
+
+    // ///////////////////////////////////////////////////////////////////////////
+    // INTERFACE IMPLEMENTATION
+    // ///////////////////////////////////////////////////////////////////////////
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        String SelectedValue =  parent.getItemAtPosition(pos).toString();
+        OutcomeChoice OC = null;
+        for(int i=0;i<AvailableOutcomes.size(); i++) {
+            if (AvailableOutcomes.get(i).DisplayName.equals(SelectedValue)) {
+                OC = (OutcomeChoice) AvailableOutcomes.get(i);
+                break;
+            }
+        }
+
+        Spinner ReasonSpinner = (Spinner)vRoot.findViewById(R.id.reason_selection);
+
+        if (OC.RequiresReason)
+        {
+            ReasonSpinner.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            ReasonSpinner.setVisibility(View.GONE);
+        }
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
     }
 
     public class OutcomeChoice
