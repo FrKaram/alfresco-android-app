@@ -255,7 +255,7 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
 
     public void initCompleteForm()
     {
-        RejectReason.add("--- Sélectioner un motif en cas de rejet ---"); //TODO : Use localisation files
+        RejectReason.add("--- Sélectionner un motif en cas de rejet ---"); //TODO : Use localisation files
 
         if (currentProcess != null)
         {
@@ -304,8 +304,8 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
                         AvailableOutcomes.add(new OutcomeChoice("Done", currentTask.getKey()+"Outcome", "Done", false));
                         break;
                     default:
-                        //AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
-                        //AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
+                        AvailableOutcomes.add(new OutcomeChoice("Approve", currentTask.getKey()+"Outcome", "Approve", false));
+                        AvailableOutcomes.add(new OutcomeChoice("Reject", currentTask.getKey()+"Outcome", "Reject" , true));
                         break;
                 }
 
@@ -556,6 +556,7 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
         Map<String, Serializable> variables = new HashMap<String, Serializable>(3);
 
         Spinner  ActionSelection = (Spinner)vRoot.findViewById(R.id.action_selection);
+        if (ActionSelection.getSelectedItem() == null) return; //No choice was made (means that no options were available for this type of task)
         String SelectedItem = ActionSelection.getSelectedItem().toString();
 
         OutcomeChoice OC = null;
