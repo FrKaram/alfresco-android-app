@@ -2,8 +2,6 @@ This is a fork of the official Alfresco Android App (https://github.com/Alfresco
 
 ## What's the code License ?
 
-    Alfresco Mobile for Android 1.8
-
     Copyright © 2017 Alfresco Software, Ltd. and others.
 
     This product distribution is made available under the Apache 2.0 license http://www.apache.org/licenses/LICENSE-2.0.html.
