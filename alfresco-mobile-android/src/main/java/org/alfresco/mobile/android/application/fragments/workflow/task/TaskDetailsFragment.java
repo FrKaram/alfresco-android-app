@@ -577,7 +577,8 @@ public class TaskDetailsFragment extends AlfrescoFragment implements UserPickerC
             }
             else
             {
-                variables.put("rejectionReason",ReasonSelection.getSelectedItem().toString());
+                String RejectionReasonKey = currentTask.getKey().substring(0, currentTask.getKey().indexOf(':')) + "_rejectionReason";
+                variables.put(RejectionReasonKey,ReasonSelection.getSelectedItem().toString());
             }
         }
 
