@@ -28,3 +28,4 @@ pom.xml.*
 /build.properties
 .DS_Store
 /build
+/release
